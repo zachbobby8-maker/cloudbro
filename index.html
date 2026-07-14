@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cloud Bros Clubs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sky: '#0077b6',
+            skyDark: '#005f8a',
+            cloud: '#1a1a2e',
+            chalk: '#e5e5e5'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-black text-chalk h-screen flex flex-col overflow-hidden selection:bg-sky selection:text-white">
+  
+  <!-- ONBOARDING VIEW -->
+  <div id="signup-view" class="view active flex-col h-full w-full max-w-md mx-auto relative z-10 bg-black overflow-y-auto">
+    <div class="absolute inset-0 opacity-20 pointer-events-none fixed" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=800'); background-size: cover; background-position: center; mix-blend-mode: luminosity;"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none fixed"></div>
+
+    <div class="w-full relative z-10 space-y-6 my-auto p-6 py-10 flex flex-col min-h-full justify-center">
+      <div class="text-center mb-2">
+        <h1 class="text-4xl text-white mb-2 drop-shadow-[0_0_10px_rgba(0,119,182,0.5)]" data-i18n="app.title">CLOUD BROS</h1>
+        <p class="text-gray-400 text-sm font-sans tracking-widest uppercase" data-i18n="app.subtitle">Lift to the clouds. Train with masters.</p>
+      </div>
+
+      <form id="signup-form" class="space-y-5">
+        <div>
+          <label class="block font-heavy text-lg text-sky mb-2" data-i18n="app.onboarding_name">What's your handle, bro?</label>
+          <input type="text" id="user-name" required class="w-full bg-cloud border-2 border-skyDark rounded-none px-4 py-3 text-white font-sans focus:outline-none focus:border-sky focus:ring-1 focus:ring-sky uppercase tracking-wide placeholder-gray-600" placeholder="e.g. CloudMark" data-i18n-placeholder="app.onboarding_name_placeholder">
+        </div>
+
+        <div>
+          <label class="block font-heavy text-lg text-sky mb-2" data-i18n="app.onboarding_location">Select your region</label>
+          <select id="user-region" required class="w-full bg-cloud border-2 border-skyDark rounded-none px-4 py-3 text-white font-sans focus:outline-none focus:border-sky appearance-none">
+            <option value="US" data-i18n="app.region_us">United States</option>
+            <option value="EU" data-i18n="app.region_eu">Europe</option>
+            <option value="ME" data-i18n="app.region_me">Middle East</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-heavy text-lg text-sky mb-3" data-i18n="app.onboarding_role_title">Choose your path</label>
+          <div class="space-y-3">
+            <label class="block relative cursor-pointer group">
+              <input type="radio" name="role" value="Pilot" required class="peer sr-only">
+              <div class="p-3 border-2 border-gray-800 bg-cloud peer-checked:border-sky peer-checked:bg-skyDark/20 transition-all">
+                <div class="font-heavy text-base text-white" data-i18n="app.role_trainer">Pilot (Guiding Bros)</div>
+                <div class="text-xs text-gray-400 mt-1 font-sans" data-i18n="app.role_trainer_desc">You have the experience. Guide the next generation of cloud chasers.</div>
+              </div>
+            </label>
+            <label class="block relative cursor-pointer group">
+              <input type="radio" name="role" value="Rookie" class="peer sr-only">
+              <div class="p-3 border-2 border-gray-800 bg-cloud peer-checked:border-sky peer-checked:bg-skyDark/20 transition-all">
+                <div class="font-heavy text-base text-white" data-i18n="app.role_seeker">Rookie (Seeking Guidance)</div>
+                <div class="text-xs text-gray-400 mt-1 font-sans" data-i18n="app.role_seeker_desc">You have the hunger. Find a veteran to soar higher.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-sky hover:bg-blue-700 text-white font-heavy text-xl py-4 transition-colors tracking-widest mt-4 uppercase border border-blue-500 shadow-[0_0_15px_rgba(0,119,182,0.5)]" data-i18n="app.ENTER THE SPIN">
+          Enter the Club
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP VIEW -->
+  <div id="app-view" class="view flex-col h-full w-full max-w-md mx-auto bg-black relative">
+    
+    <!-- Header -->
+    <header class="bg-cloud border-b border-skyDark p-4 flex justify-between items-center z-20 shrink-0 shadow-md shadow-blue-900/20">
+      <div class="font-heavy text-2xl text-white tracking-widest">CLOUD <span class="text-sky">BROS CLUBS</span></div>
+      <div id="header-user-role" class="text-xs font-bold px-2 py-1 bg-skyDark text-white rounded-sm uppercase tracking-wider">PILOT</div>
+      <div class="flex items-center gap-3">
+        <span class="text-[10px] text-gray-500"><span id="online-counter" class="text-emerald-400 font-heavy">0</span> online</span>
+        <button id="admin-toggle" class="hidden text-[10px] font-heavy px-2 py-1 bg-red-900/50 text-red-400 rounded hover:bg-red-800 transition-colors uppercase tracking-wider">ADMIN</button>
+      </div>
+    </header>
+
+    <!-- Tab Contents -->
+    <div class="flex-1 overflow-hidden relative">
+      
+      <!-- CHAT TAB -->
+      <div id="tab-chat" class="absolute inset-0 flex flex-col transition-opacity duration-300">
+        <div id="chat-messages" class="flex-1 overflow-y-auto chat-scroll p-4 space-y-6 pb-20 font-sans">
+          <!-- Messages will be injected here -->
+        </div>
+        
+        <div class="absolute bottom-0 left-0 right-0 p-3 bg-cloud border-t border-gray-800">
+          <form id="chat-form" class="flex gap-2">
+            <input type="text" id="chat-input" class="flex-1 bg-black border border-gray-700 rounded-none px-3 py-2 text-white font-sans focus:outline-none focus:border-sky placeholder-gray-600" placeholder="Speak your truth on the spin..." autocomplete="off" data-i18n-placeholder="app.chat_input_placeholder">
+            <button type="submit" class="bg-sky hover:bg-blue-700 text-white font-heavy px-4 py-2 transition-colors uppercase" data-i18n="app.chat_send">SEND</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- RADAR TAB -->
+      <div id="tab-radar" class="absolute inset-0 flex flex-col transition-opacity duration-300 opacity-0 pointer-events-none p-4">
+        <div class="text-center mb-6 mt-4">
+          <h2 class="font-heavy text-3xl text-white" data-i18n="app.radar_title">Global Bros Radar</h2>
+          <p id="radar-subtitle" class="text-sky font-sans text-sm" data-i18n="app.radar_subtitle">Scanning for active cloud chasers in your region...</p>
+        </div>
+        
+        <div class="flex-1 flex items-center justify-center">
+          <div class="radar-container" id="radar-map">
+            <div class="radar-grid"></div>
+            <div class="radar-sweep"></div>
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-center gap-6 font-sans text-xs uppercase tracking-wider text-gray-400">
+          <div class="flex items-center gap-2"><div class="w-3 h-3 bg-[#3399ff] rounded-full shadow-[0_0_5px_#39f]"></div> Pilots</div>
+          <div class="flex items-center gap-2"><div class="w-3 h-3 bg-[#66ccff] rounded-full shadow-[0_0_5px_#6cf]"></div> Rookies</div>
+        </div>
+      </div>
+
+      <!-- VIDEO TAB -->
+      <div id="tab-video" class="absolute inset-0 flex flex-col transition-opacity duration-300 opacity-0 pointer-events-none p-4 overflow-y-auto">
+        <div class="text-center mb-4">
+          <h2 class="font-heavy text-3xl text-white" data-i18n="app.video_title">LIVE SPINS NEARBY</h2>
+          <p class="text-sky font-sans text-sm" data-i18n="app.video_subtitle">Watch the masters. Open your own camera below. No direct calls — just pure spin.</p>
+        </div>
+                <!-- NEW USER CAMERA SECTION -->
+        <div class="mb-6 relative mx-auto w-full max-w-sm rounded overflow-hidden border-2 border-sky shadow-[0_0_15px_rgba(0,119,182,0.4)]">
+          <div class="absolute top-2 left-2 z-10 flex items-center gap-2">
+            <div class="w-2 h-2 bg-red-600 rounded-full animate-pulse shadow-[0_0_5px_red]"></div>
+            <span class="text-[10px] font-heavy text-white tracking-widest drop-shadow-md">REC / YOUR SPIN</span>
+          </div>
+          <div class="scanlines z-10"></div>
+          <video id="user-camera-feed" class="w-full aspect-video object-cover bg-gray-900" autoplay playsinline muted></video>
+          <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent flex justify-center z-20">
+            <button id="toggle-camera-btn" class="bg-sky hover:bg-blue-700 text-white font-heavy px-6 py-2 text-sm uppercase tracking-widest transition-colors border border-blue-500 shadow-[0_0_10px_rgba(0,119,182,0.6)]">START CAMERA</button>
+          </div>
+        </div>
+
+        <div id="video-grid" class="grid grid-cols-2 gap-3 pb-20"></div>
+      </div>
+
+      <!-- SECRETS TAB -->
+      <div id="tab-secrets" class="absolute inset-0 flex flex-col transition-opacity duration-300 opacity-0 pointer-events-none p-4 overflow-y-auto">
+        <div class="text-center mb-4">
+          <h2 class="font-heavy text-3xl text-white" data-i18n="app.secrets_title">SPILL TO THE MASTERS</h2>
+          <p class="text-sky font-sans text-sm" data-i18n="app.secrets_subtitle">Confess your spin sins. Stay anonymous if you dare.</p>
+        </div>
+        
+        <form id="secret-form" class="bg-cloud border border-skyDark p-4 mb-4">
+          <textarea id="secret-text" class="secret-textarea w-full bg-black border border-gray-700 p-3 text-sm font-sans resize-y" placeholder="Spill your secret here..." rows="4"></textarea>
+          <div class="flex items-center justify-between mt-3">
+            <label class="flex items-center gap-2 text-xs text-gray-400">
+              <input type="checkbox" id="secret-anon"> Anonymous
+            </label>
+            <button type="submit" class="bg-sky px-5 py-1.5 text-xs font-heavy uppercase tracking-widest">SEND TO MASTERS</button>
+          </div>
+        </form>
+        
+        <div id="secrets-list" class="space-y-3 pb-8"></div>
+      </div>
+
+      <!-- MASTERS TAB -->
+      <div id="tab-masters" class="absolute inset-0 flex flex-col transition-opacity duration-300 opacity-0 pointer-events-none p-4 overflow-y-auto">
+        <div class="text-center mb-4">
+          <h2 class="font-heavy text-3xl text-white" data-i18n="app.masters_title">THE MASTERS</h2>
+          <p class="text-sky font-sans text-sm" data-i18n="app.masters_subtitle">They have completed the full MM. Learn from them.</p>
+        </div>
+        <div id="masters-list" class="space-y-4 pb-10"></div>
+      </div>
+
+      <!-- PROFILE TAB -->
+      <div id="tab-profile" class="absolute inset-0 flex flex-col transition-opacity duration-300 opacity-0 pointer-events-none p-6 font-sans overflow-y-auto">
+        <!-- Admin Panel (hidden by default) -->
+        <div id="admin-panel" class="hidden mb-6"></div>
+
+        <!-- Profile Section -->
+        <h2 class="font-heavy text-3xl text-white mb-6 border-b border-skyDark pb-2" data-i18n="app.profile_title">YOUR STATS</h2>
+        
+        <div class="bg-cloud border border-gray-800 p-6 flex flex-col items-center gap-4">
+          <div class="w-32 h-32 rounded-full border-4 border-sky overflow-hidden shadow-[0_0_20px_rgba(0,119,182,0.4)]">
+             <img id="profile-avatar-img" src="https://ui-avatars.com/api/?name=YOU&background=1a1a2e&color=0077b6&bold=true" alt="Avatar" class="w-full h-full object-cover grayscale opacity-80 mix-blend-screen">
+          </div>
+          <h3 id="profile-name" class="font-heavy text-2xl text-white tracking-widest mt-2 uppercase">USERNAME</h3>
+          <div class="w-full space-y-3 mt-4 text-sm">
+            <div class="flex justify-between border-b border-gray-800 pb-2">
+              <span class="text-gray-500 uppercase font-bold" data-i18n="app.profile_role">Role:</span>
+              <span id="profile-role-val" class="text-white font-heavy text-base text-sky">PILOT</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-800 pb-2">
+              <span class="text-gray-500 uppercase font-bold" data-i18n="app.profile_region">Region:</span>
+              <span id="profile-region-val" class="text-white font-heavy text-base">US</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-800 pb-2">
+              <span class="text-gray-500 uppercase font-bold">Spin Level:</span>
+              <span id="profile-spin-level" class="text-white font-heavy text-base text-sky">1</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-800 pb-2">
+              <span class="text-gray-500 uppercase font-bold">Slams:</span>
+              <span id="profile-slam-count" class="text-white font-heavy text-base">0</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-800 pb-2">
+              <span class="text-gray-500 uppercase font-bold">MM Protocol:</span>
+              <span id="profile-mm-status" class="text-white font-heavy text-base text-yellow-400">⏳ IN PROGRESS</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-800 pb-2">
+              <span class="text-gray-500 uppercase font-bold">Bio:</span>
+              <span id="profile-bio-val" class="text-white text-xs text-right max-w-[60%] italic"></span>
+            </div>
+          </div>
+          <div class="w-full space-y-2 mt-4">
+            <button id="btn-edit-profile" class="w-full border border-sky/50 text-sky hover:bg-sky/10 py-2 font-heavy uppercase transition-colors text-sm">
+              ✏️ Edit Profile
+            </button>
+            <button id="btn-logout" class="w-full border border-gray-700 text-gray-400 hover:text-white hover:border-white py-2 font-heavy uppercase transition-colors text-sm">
+              Wipe Data & Restart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mentorship FAB -->
+    <button id="fab-mentorship" class="absolute bottom-24 right-4 z-30 bg-sky text-white rounded-full w-14 h-14 flex items-center justify-center shadow-[0_0_15px_rgba(0,119,182,0.6)] hover:bg-blue-700 transition-transform hover:scale-105" title="Book Private Meeting">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+    </button>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-cloud border-t border-skyDark flex shrink-0 z-20 text-[10px]">
+      <button class="nav-btn flex-1 py-3 flex flex-col items-center gap-0.5 text-sky transition-colors" data-target="tab-chat">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        <span class="font-heavy tracking-widest uppercase" data-i18n="app.SPIN CHAT">Chat</span>
+      </button>
+      <button class="nav-btn flex-1 py-3 flex flex-col items-center gap-0.5 text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-radar">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
+        <span class="font-heavy tracking-widest uppercase" data-i18n="app.nav_radar">Radar</span>
+      </button>
+      <button class="nav-btn flex-1 py-3 flex flex-col items-center gap-0.5 text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-video">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+        <span class="font-heavy tracking-widest uppercase" data-i18n="app.LIVE SPINS">Video</span>
+      </button>
+      <button class="nav-btn flex-1 py-3 flex flex-col items-center gap-0.5 text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-secrets">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <span class="font-heavy tracking-widest uppercase" data-i18n="app.CONFESS">Secrets</span>
+      </button>
+      <button class="nav-btn flex-1 py-3 flex flex-col items-center gap-0.5 text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-masters">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <span class="font-heavy tracking-widest uppercase" data-i18n="app.nav_masters">Masters</span>
+      </button>
+      <button class="nav-btn flex-1 py-3 flex flex-col items-center gap-0.5 text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-profile">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <span class="font-heavy tracking-widest uppercase" data-i18n="app.nav_profile">Profile</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Profile Modal for Radar -->
+  <div id="radar-modal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm px-4">
+    <div class="bg-cloud border border-sky w-full max-w-sm p-6 relative transform scale-95 transition-transform duration-300" id="radar-modal-content">
+      <button id="close-modal" class="absolute top-2 right-4 text-gray-500 hover:text-white font-heavy text-xl">&times;</button>
+      <div class="flex items-center gap-4 border-b border-gray-800 pb-4 mb-4">
+        <img id="modal-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" class="w-16 h-16 rounded-full border-2 border-sky object-cover grayscale mix-blend-screen">
+        <div>
+          <h3 id="modal-name" class="font-heavy text-2xl text-white uppercase tracking-wider">Name</h3>
+          <p id="modal-role" class="text-xs font-bold uppercase tracking-wider text-sky">Role &bull; Region</p>
+        </div>
+      </div>
+      <p id="modal-bio" class="text-sm text-gray-300 font-sans italic border-l-2 border-sky pl-3">Bio goes here</p>
+      <button class="w-full mt-6 bg-sky hover:bg-blue-700 text-white font-heavy py-2 uppercase text-sm tracking-widest" id="modal-message-btn">Message Bro</button>
+    </div>
+  </div>
+
+  <!-- Mentorship Modal -->
+  <div id="mentorship-modal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm px-4">
+    <div class="bg-cloud border border-sky w-full max-w-sm p-6 relative transform scale-95 transition-transform duration-300" id="mentorship-modal-content">
+      <button id="close-mentorship" class="absolute top-2 right-4 text-gray-500 hover:text-white font-heavy text-xl">&times;</button>
+      <div class="text-center mb-4">
+        <svg class="w-12 h-12 text-sky mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        <h3 class="font-heavy text-2xl text-white uppercase tracking-wider">PRIVATE MASTER SESSION</h3>
+      </div>
+      <p class="text-sm text-gray-300 font-sans text-center mb-4">Secure a 1-on-1 private video link with an elite pilot. Complete the full MM protocol.</p>
+      <div class="bg-black/50 border border-gray-700 rounded p-4 mb-4 text-sm text-gray-300 space-y-3">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">1️⃣</span>
+          <span>Send <strong class="text-white">$30</strong> via PayPal</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">2️⃣</span>
+          <span>DM an admin with your payment screenshot</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">3️⃣</span>
+          <span>Receive your <strong class="text-sky">private session code</strong></span>
+        </div>
+      </div>
+      <a href="https://paypal.me/hizzey12" target="_blank" class="block w-full bg-[#00457C] hover:bg-[#0079C1] text-white font-heavy py-3 uppercase text-center tracking-widest transition-colors mb-3">
+        💰 PAY $30 VIA PAYPAL
+      </a>
+      <p class="text-[10px] text-gray-500 text-center">PayPal: hizzey12@gmx.de • Then DM an admin for your code</p>
+    </div>
+  </div>
+
+  <!-- Video Call Modal -->
+  <div id="call-modal" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm px-4">
+    <div class="bg-cloud border-2 border-sky w-full max-w-sm p-6 relative transform scale-95 transition-transform duration-300" id="call-modal-content">
+      <button id="close-call-modal" class="absolute top-2 right-4 text-gray-500 hover:text-white font-heavy text-xl z-10">&times;</button>
+      <div class="text-center mb-4">
+        <img id="call-modal-avatar" src="" class="w-20 h-20 rounded-full border-2 border-sky mx-auto mb-3 object-cover" alt="">
+        <h3 id="call-modal-name" class="font-heavy text-2xl text-white uppercase tracking-wider"></h3>
+        <p id="call-modal-role" class="text-sky text-sm"></p>
+      </div>
+      <div class="bg-black/50 p-4 mb-4 rounded text-sm text-gray-300 text-center">
+        <p class="mb-2">📹 <span class="font-heavy text-white">Peer-to-Peer Video Call</span></p>
+        <p class="text-xs text-gray-500">WebRTC encrypted • No server stores your video</p>
+        <p class="text-xs text-gray-500 mt-1">Camera & microphone required</p>
+      </div>
+      <button id="start-call-btn" class="w-full bg-sky hover:bg-blue-700 text-white font-heavy py-3 uppercase tracking-widest transition-colors">
+        📹 START VIDEO CALL — $30
+      </button>
+      <p class="text-[10px] text-gray-500 mt-3 text-center">Pay via PayPal (hizzey12@gmx.de) then DM an admin for your session code</p>
+    </div>
+  </div>
+
+  <!-- In-Call View (overlay) -->
+  <div id="in-call-view" class="hidden fixed inset-0 bg-black z-[60] flex flex-col">
+    <!-- Remote video (full screen) -->
+    <video id="remote-video-feed" class="w-full h-full object-cover" autoplay playsinline></video>
+
+    <!-- Local video (PiP) -->
+    <div class="absolute top-4 right-4 w-32 aspect-video rounded-lg overflow-hidden border-2 border-sky shadow-lg z-10">
+      <video id="local-pip-video" class="w-full h-full object-cover bg-gray-900" autoplay playsinline muted></video>
+    </div>
+
+    <!-- Call info overlay -->
+    <div class="absolute top-4 left-4 z-10">
+      <div class="bg-black/70 backdrop-blur px-3 py-1.5 rounded text-white">
+        <span id="in-call-name" class="font-heavy text-sm"></span>
+        <span class="text-emerald-400 text-xs ml-2">● Connected</span>
+      </div>
+    </div>
+
+    <!-- Call controls -->
+    <div class="absolute bottom-8 left-0 right-0 flex justify-center gap-4 z-10">
+      <button id="mute-btn" class="bg-cloud/90 hover:bg-cloud border border-gray-600 text-white rounded-full w-14 h-14 flex items-center justify-center text-xl transition-colors backdrop-blur" title="Mute">
+        🔊
+      </button>
+      <button id="video-off-btn" class="bg-cloud/90 hover:bg-cloud border border-gray-600 text-white rounded-full w-14 h-14 flex items-center justify-center text-xl transition-colors backdrop-blur" title="Toggle Video">
+        📹
+      </button>
+      <button id="hangup-btn" class="bg-red-600 hover:bg-red-700 text-white rounded-full w-16 h-16 flex items-center justify-center text-xl transition-colors shadow-lg shadow-red-900/50" title="Hang Up">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="mockData.js"></script>
+  <script src="state.js"></script>
+  <script src="videoCall.js"></script>
+  <script src="ui.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
